@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Room {
     
-    public int WIDTH,HEIGHT,BORDER;
+    public int WIDTH,HEIGHT,BORDER, DOOR_WIDTH;
     
     private int x, y;
     
@@ -25,12 +25,18 @@ public class Room {
     
     public boolean found = false;
     
+    public CoinHandler ch;
+    
     public Room(int height, int width, int x, int y){
         WIDTH = width;
         HEIGHT = height;
         BORDER = (int)( (float)height*0.05f);
+        DOOR_WIDTH = (int)((float)BORDER*1.5f);
         this.x = x;
         this.y = y;
+        
+        ch = new CoinHandler(5, BORDER, WIDTH-BORDER);
+        
     }
     
     public void draw(){
@@ -41,18 +47,27 @@ public class Room {
         
         glColor3f(0.5451f, 0.2706f, 0.0745f);
         if(doorN){
-            glRectd(WIDTH/2 - BORDER, 0, WIDTH/2 + BORDER, BORDER);
+            glRectd(WIDTH/2 - DOOR_WIDTH, 0, WIDTH/2 + DOOR_WIDTH, BORDER);
         }
         if(doorE){
-            glRectd(WIDTH - BORDER, HEIGHT/2 -BORDER, WIDTH, HEIGHT/2 + BORDER);
+            glRectd(WIDTH - BORDER, HEIGHT/2 -DOOR_WIDTH, WIDTH, HEIGHT/2 + DOOR_WIDTH);
         }
         if(doorS){
-            glRectd(WIDTH/2 - BORDER, HEIGHT - BORDER, WIDTH/2 + BORDER, HEIGHT);
+            glRectd(WIDTH/2 - DOOR_WIDTH, HEIGHT - BORDER, WIDTH/2 + DOOR_WIDTH, HEIGHT);
         }
         if(doorW){
-            glRectd(0, HEIGHT/2 -BORDER, BORDER, HEIGHT/2 + BORDER);
+            glRectd(0, HEIGHT/2 -DOOR_WIDTH, BORDER, HEIGHT/2 + DOOR_WIDTH);
         }
         
+        ch.drawCoins();
+        
+    }
+    
+    public void drawTrapDoor(){
+        if(type == 1){
+            glColor3f(0.0f, 0.0f, 0.0f);
+            glRectd(HEIGHT/2 - DOOR_WIDTH,HEIGHT/2 - DOOR_WIDTH,HEIGHT/2+DOOR_WIDTH,HEIGHT/2+DOOR_WIDTH);
+        }
     }
     
     public void handleRoomCollision(MoveableEntity m){
@@ -60,7 +75,7 @@ public class Room {
         if(m.getX() - m.getWidth()/2 < BORDER){
             
             if(doorW){
-                if(m.getY() > HEIGHT/2 - BORDER + m.getHeight()/2 &&  m.getY() < HEIGHT/2 + BORDER - m.getHeight()/2 ){
+                if(m.getY() > HEIGHT/2 - DOOR_WIDTH + m.getHeight()/2 &&  m.getY() < HEIGHT/2 + DOOR_WIDTH - m.getHeight()/2 ){
                     m.setX(WIDTH/2);
                     m.setY(WIDTH/2);
                 }else{
@@ -74,7 +89,7 @@ public class Room {
         if(m.getY() - m.getHeight()/2 < BORDER){
             
             if(doorN){
-                if(m.getX() > WIDTH/2 - BORDER + m.getWidth()/2 &&  m.getX() < WIDTH/2 + BORDER - m.getWidth()/2 ){
+                if(m.getX() > WIDTH/2 - DOOR_WIDTH + m.getWidth()/2 &&  m.getX() < WIDTH/2 + DOOR_WIDTH - m.getWidth()/2 ){
                     m.setX(WIDTH/2);
                     m.setY(WIDTH/2);
                 }else{
@@ -88,7 +103,7 @@ public class Room {
         if(m.getX() + m.getWidth()/2 > WIDTH - BORDER){
             
             if(doorE){
-                if(m.getY() > HEIGHT/2 - BORDER + m.getHeight()/2 &&  m.getY() < HEIGHT/2 + BORDER - m.getHeight()/2 ){
+                if(m.getY() > HEIGHT/2 - DOOR_WIDTH + m.getHeight()/2 &&  m.getY() < HEIGHT/2 + DOOR_WIDTH - m.getHeight()/2 ){
                     m.setX(WIDTH/2);
                     m.setY(WIDTH/2);
                 }else{
@@ -103,7 +118,7 @@ public class Room {
         if(m.getY() + m.getHeight()/2 > HEIGHT - BORDER){
             
             if(doorN){
-                if(m.getX() > WIDTH/2 - BORDER + m.getWidth()/2 &&  m.getX() < WIDTH/2 + BORDER - m.getWidth()/2 ){
+                if(m.getX() > WIDTH/2 - DOOR_WIDTH + m.getWidth()/2 &&  m.getX() < WIDTH/2 + DOOR_WIDTH - m.getWidth()/2 ){
                     m.setX(WIDTH/2);
                     m.setY(WIDTH/2);
                 }else{

@@ -18,16 +18,20 @@ public class RoomGrid {
     private int WIDTH = 0;
     private int gridSize = 15;
     private int totRooms = 0;
+    private int maxRooms = 0;
     
     public boolean showFullMap = false;
     
+    
     public RoomGrid(int n, int size, int height){
        
+       maxRooms = n;
+        
        WIDTH = height;
        
        gridSize = size;
        
-       generateRooms(n);
+       generateRooms();
        
        findConnectingRooms();
         
@@ -70,7 +74,9 @@ public boolean findRooms(int x,int y){
     
 }
     
-public void generateRooms(int nrRooms){
+public void generateRooms(){
+    
+    int nrRooms = maxRooms;
     
     if( nrRooms > (gridSize-2)*(gridSize-2)/2 && gridSize > 2){
         nrRooms = (gridSize-2)*(gridSize-2)/2;
@@ -116,6 +122,7 @@ public void generateRooms(int nrRooms){
                }else if(sum == 1 && totRooms == nrRooms - 1){
                     r = new Room(WIDTH, WIDTH, x, y);
                     r.type = 1;
+                    r.ch.coins.clear();                         
                     rooms.add(r);
                     totRooms += 1;
                     placingRoom = false;
@@ -226,18 +233,49 @@ public void generateRooms(int nrRooms){
         glRectd( x + 1f, y + 1f, x + delta - 2f, y + delta - 2f);*/
     }
     
+     public void gerenrateNewGrid(){
+        
+        if(rooms.size() > 0){
+            rooms.clear();
+        }
+        
+        totRooms = 0;
+        
+       generateRooms();
+       
+       findConnectingRooms();
+        
+       activeR = rooms.get(0);
+    }
+    
     public void handleRoomCollision(MoveableEntity m){
         
         findRooms(activeR.getX(),activeR.getY());
         
+        if(activeR.type == 1 && remainingCoins() == 0){
+        
+            if( Math.abs(m.getX() - WIDTH/2) < activeR.DOOR_WIDTH + m.getWidth()/2  && Math.abs(m.getY() - WIDTH/2) < activeR.DOOR_WIDTH + m.getHeight()/2){
+                m.setX(WIDTH/2);
+                m.setY(WIDTH/2);
+                
+                gerenrateNewGrid();
+            }
+                        
+        }
+        
         if(m.getX() - m.getWidth()/2 < activeR.BORDER){
             
             if(activeR.doorW){
-                if(m.getY() > activeR.HEIGHT/2 - activeR.BORDER + m.getHeight()/2 &&  m.getY() < activeR.HEIGHT/2 + activeR.BORDER - m.getHeight()/2 ){
-                    m.setX(activeR.WIDTH - activeR.BORDER*2);
-                    m.setY(activeR.WIDTH/2);
+                if(m.getY() > activeR.HEIGHT/2 - activeR.DOOR_WIDTH + m.getHeight()/2 &&  m.getY() < activeR.HEIGHT/2 + activeR.DOOR_WIDTH - m.getHeight()/2 ){
                     
                     setActiveRoom(activeR.getX() - 1, activeR.getY());
+                    if(remainingCoins() > 0 && activeR.type == 1){
+                        setActiveRoom(activeR.getX() + 1, activeR.getY());
+                        m.setX(activeR.BORDER + m.getWidth()/2);
+                    }else{
+                        m.setX(activeR.WIDTH - activeR.BORDER*2);
+                        m.setY(activeR.WIDTH/2);
+                    }
                     
                 }else{
                     m.setX(activeR.BORDER + m.getWidth()/2);
@@ -250,11 +288,17 @@ public void generateRooms(int nrRooms){
         if(m.getY() - m.getHeight()/2 < activeR.BORDER){
             
             if(activeR.doorN){
-                if(m.getX() > activeR.WIDTH/2 - activeR.BORDER + m.getWidth()/2 &&  m.getX() < activeR.WIDTH/2 + activeR.BORDER - m.getWidth()/2 ){
-                    m.setX(activeR.WIDTH/2);
-                    m.setY(activeR.WIDTH - activeR.BORDER*2);
+                if(m.getX() > activeR.WIDTH/2 - activeR.DOOR_WIDTH + m.getWidth()/2 &&  m.getX() < activeR.WIDTH/2 + activeR.DOOR_WIDTH - m.getWidth()/2 ){
                     
                     setActiveRoom(activeR.getX(), activeR.getY() - 1);
+                    if(remainingCoins() > 0 && activeR.type == 1){
+                        setActiveRoom(activeR.getX(), activeR.getY() + 1);
+                        m.setY(activeR.BORDER + m.getWidth()/2);
+                    }else{
+                        m.setX(activeR.WIDTH/2);
+                        m.setY(activeR.WIDTH - activeR.BORDER*2);
+                    }
+                    
                 }else{
                     m.setY(activeR.BORDER + m.getHeight()/2);
                 }
@@ -266,12 +310,17 @@ public void generateRooms(int nrRooms){
         if(m.getX() + m.getWidth()/2 > activeR.WIDTH - activeR.BORDER){
             
             if(activeR.doorE){
-                if(m.getY() > activeR.HEIGHT/2 - activeR.BORDER + m.getHeight()/2 &&  m.getY() < activeR.HEIGHT/2 + activeR.BORDER - m.getHeight()/2 ){
-                    m.setX(activeR.BORDER*2);
-                    m.setY(activeR.WIDTH/2);
+                if(m.getY() > activeR.HEIGHT/2 - activeR.DOOR_WIDTH + m.getHeight()/2 &&  m.getY() < activeR.HEIGHT/2 + activeR.DOOR_WIDTH - m.getHeight()/2 ){
                     
                     setActiveRoom(activeR.getX() + 1, activeR.getY());
-                    
+                    if(remainingCoins() > 0 && activeR.type == 1){
+                        setActiveRoom(activeR.getX() - 1, activeR.getY());
+                        m.setX(activeR.WIDTH - activeR.BORDER - m.getWidth()/2);
+                    }else{
+                       m.setX(activeR.BORDER*2);
+                       m.setY(activeR.WIDTH/2);
+                    }
+                                       
                 }else{
                     m.setX(activeR.WIDTH - activeR.BORDER - m.getWidth()/2);
                 }
@@ -284,11 +333,16 @@ public void generateRooms(int nrRooms){
         if(m.getY() + m.getHeight()/2 > activeR.HEIGHT - activeR.BORDER){
             
             if(activeR.doorS){
-                if(m.getX() > activeR.WIDTH/2 - activeR.BORDER + m.getWidth()/2 &&  m.getX() < activeR.WIDTH/2 + activeR.BORDER - m.getWidth()/2 ){
-                    m.setX(activeR.WIDTH/2);
-                    m.setY(activeR.BORDER*2);
+                if(m.getX() > activeR.WIDTH/2 - activeR.DOOR_WIDTH + m.getWidth()/2 &&  m.getX() < activeR.WIDTH/2 + activeR.DOOR_WIDTH - m.getWidth()/2 ){
                     
                     setActiveRoom(activeR.getX(), activeR.getY() + 1);
+                    if(remainingCoins() > 0 && activeR.type == 1){
+                        setActiveRoom(activeR.getX(), activeR.getY() - 1);
+                        m.setY(activeR.WIDTH - activeR.BORDER - m.getWidth()/2);
+                    }else{
+                        m.setX(activeR.WIDTH/2);
+                        m.setY(activeR.BORDER*2);
+                    }
                     
                 }else{
                     m.setY(activeR.HEIGHT - activeR.BORDER - m.getHeight()/2);
@@ -298,6 +352,8 @@ public void generateRooms(int nrRooms){
             }
             
         }
+        
+        activeR.ch.handleCollisions(m);
         
     }
     
@@ -319,19 +375,28 @@ public void generateRooms(int nrRooms){
         
     }
     
-    public void gerenrateNewGrid(int n){
+    public void drawRoom(){
+        activeR.draw();
         
-        if(rooms.size() > 0){
-            rooms.clear();
+        if(remainingCoins() == 0){
+            activeR.drawTrapDoor();
+        }
+    }
+    
+    public int remainingCoins(){
+        
+        int count = 0;
+        for(int i = 0; i < rooms.size(); ++i){
+            
+            Room r1 = rooms.get(i);
+            count += r1.ch.coins.size();
+
         }
         
-        totRooms = 0;
+        return count;
         
-       generateRooms(n);
-       
-       findConnectingRooms();
-        
-       activeR = rooms.get(0);
     }
+    
+   
     
 }
