@@ -99,7 +99,7 @@ public class EntityDemo {
         while (!Display.isCloseRequested()) {
             // Render
 
-            point.setLocation(Mouse.getX(), HEIGHT - Mouse.getY() - 1);
+            //point.setLocation(Mouse.getX(), HEIGHT - Mouse.getY() - 1);
 
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -107,7 +107,7 @@ public class EntityDemo {
             
             // Update
             player.update(delta);
-            point.update(delta);
+            //point.update(delta);
 
             // Check keys
             input(player, rg);
