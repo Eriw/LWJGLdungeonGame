@@ -64,6 +64,26 @@ public class EntityDemo {
             rg.showFullMap = false;
         }
         
+        if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)){
+            
+            MoveableEntity player = e;
+            
+            for(int i = 0; i < rg.activeR.ch.coins.size(); ++i){
+                Coin c = rg.activeR.ch.coins.get(i);
+                
+                float dx = (float)player.getX() - (float)c.getX();
+                dx /= Math.abs(dx);
+                float dy = (float)player.getY() - (float)c.getY();
+                dy /= Math.abs(dy);
+                float step = 3f;
+                
+                c.setX(c.getX() + dx*step);
+                c.setY(c.getY() + dy*step);
+                
+                
+            }
+        }
+        
         if(Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)){
             Display.destroy();
             System.exit(0);
