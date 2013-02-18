@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Box extends AbstractMovableEntity {
     
-    public Box(double x, double y, double width, double height) {
+    public Box(float x, float y, float width, float height) {
         super(x, y, width, height);
     }
 

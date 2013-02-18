@@ -10,7 +10,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Player extends AbstractMovableEntity{
     
-    public Player(double x, double y, double width, double height) {
+    public Player(float x, float y, float width, float height) {
         super(x, y, width, height);
     }
 

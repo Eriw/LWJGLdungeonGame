@@ -14,7 +14,7 @@ public class Coin extends AbstractEntity {
         float white = 0f;
         float colorVector = 0.05f;
     
-        public Coin(double x, double y, float size) {
+        public Coin(float x, float y, float size) {
             super(x, y, size, size);
         }
 

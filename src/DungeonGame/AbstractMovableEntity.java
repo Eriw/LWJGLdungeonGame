@@ -7,10 +7,9 @@ package DungeonGame;
 public abstract class AbstractMovableEntity extends AbstractEntity implements
         MoveableEntity {
 
-    protected double dx, dy;
+    protected float dx, dy;
 
-    public AbstractMovableEntity(double x, double y, double width,
-                                 double height) {
+    public AbstractMovableEntity(float x, float y, float width,float height) {
         super(x, y, width, height);
         this.dx = 0;
         this.dy = 0;
@@ -22,19 +21,19 @@ public abstract class AbstractMovableEntity extends AbstractEntity implements
         this.y += delta * dy;
     }
 
-    public double getDX() {
+    public float getDX() {
         return dx;
     }
 
-    public double getDY() {
+    public float getDY() {
         return dy;
     }
 
-    public void setDX(double dx) {
+    public void setDX(float dx) {
         this.dx = dx;
     }
 
-    public void setDY(double dy) {
+    public void setDY(float dy) {
         this.dy = dy;
     }
 

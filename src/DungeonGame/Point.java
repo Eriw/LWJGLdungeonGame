@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Point extends AbstractEntity {
 
-        public Point(double x, double y) {
+        public Point(float x, float y) {
             super(x, y, 1, 1);
         }
 
