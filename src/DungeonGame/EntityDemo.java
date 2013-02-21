@@ -76,7 +76,7 @@ public class EntityDemo {
                 float dy = (float)player.getY() - (float)c.getY();
                 dy /= Math.abs(dy);
                 
-                float step = 5f;
+                float step = 7f;
                 c.setX(c.getX() + dx*step);
                 c.setY(c.getY() + dy*step);
                 
